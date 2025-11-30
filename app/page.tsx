@@ -16,13 +16,17 @@ export default async function Home() {
     const todoList = await generateTodo();
 
     return (
-        <div className="">
-            <h1>My Todos: </h1>
-            <ul>
-                {todoList.map((item) => (
-                    <li key={item.id}>Task: {item.task} | Priority: {item.priority} | Due Date: {item.dueDate} | Completed: {item.completed}</li>
-                ))}
-            </ul>
+        <div className="flex h-screen flex-col items-center justify-center gap-3 bg-blue-900">
+            <div className="bg-blue-700 text-gray-100 p-5 rounded-xl">
+                <ul className="flex flex-col gap-2">
+                    {todoList.map((item) => (
+                        <li key={item.id}>
+                            {item.task} | Priority: {item.priority} | Due
+                            Date: {item.dueDate} | Completed: {item.completed ? "true" : "false"}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 }
@@ -44,7 +48,7 @@ async function generateTodo(): Promise<TodoList> {
             // **This is the key setting for clean JSON output**
             responseMimeType: "application/json",
             // Optional: You can try increasing temperature slightly to encourage simpler output, though not strictly required
-            // temperature: 0.1, 
+            // temperature: 0.1,
         },
     });
 
@@ -60,18 +64,20 @@ async function generateTodo(): Promise<TodoList> {
         // Optional: Add a check to ensure it's an array and not an empty object
         if (Array.isArray(parsedData)) {
             // Type assertion (as TodoList) is safe here since we control the prompt
-            return parsedData as TodoList; 
+            return parsedData as TodoList;
         } else {
             // Handle cases where the output might be valid JSON but not an array
             console.error("Parsed data is not an array:", parsedData);
             return [];
         }
-
     } catch (error) {
         // Log the error and the problematic text for debugging
-        console.error("JSON Parsing Failed. Check the RAW GEMINI RESPONSE above for errors.", error);
-        
+        console.error(
+            "JSON Parsing Failed. Check the RAW GEMINI RESPONSE above for errors.",
+            error
+        );
+
         // **Return an empty array as a safe fallback**
-        return []; 
+        return [];
     }
 }
